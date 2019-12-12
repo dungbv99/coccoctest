@@ -208,7 +208,7 @@ long createInitialRuns(long long int max_size) {
 
 
 	myfile.close();
-	long long int max_size_file = pow(2, 30)-100;/////////////////////////////////////////////////////////////////////////
+	long long int max_size_file = 2.5*pow(2, 30)-100;/////////////////////////////////////////////////////////////////////////
 
 	if (file_size == 0) {
 		cout << "file is empty\n";
