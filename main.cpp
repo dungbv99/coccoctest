@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include <chrono> 
 
 #include <string>
 #include <iostream>
@@ -8,9 +9,10 @@
 #include <iostream>
 #include <stdlib.h>     // EXIT_FAILURE
 #include <stdio.h>
-#include <unordered_map>
-using namespace std;
+#include <math.h>
 
+using namespace std;
+using namespace std::chrono; 
 //vector<string> words;
 
 
@@ -42,7 +44,7 @@ void merge(vector<string>& arr, int l, int m, int r) {
 	j = 0;
 	k = l;
 	while (i < n1 && j < n2) {
-		if (L[i].compare(R[j]) == -1) {
+		if (L[i].compare(R[j]) < 0) {
 			arr[k++] = L[i++];
 		}
 		else {
@@ -57,6 +59,8 @@ void merge(vector<string>& arr, int l, int m, int r) {
 	while (j < n2) {
 		arr[k++] = R[j++];
 	}
+	L.clear();
+	R.clear();
 
 
 }
@@ -91,7 +95,7 @@ void mergeArr(vector<MinHeapNode>& arr, int l, int m, int r) {
 	j = 0;
 	k = l;
 	while (i < n1 && j < n2) {
-		if (L[i].line.compare(R[j].line) == -1) {
+		if (L[i].line.compare(R[j].line) < 0) {
 			arr[k++] = L[i++];
 		}
 		else {
@@ -106,6 +110,8 @@ void mergeArr(vector<MinHeapNode>& arr, int l, int m, int r) {
 	while (j < n2) {
 		arr[k++] = R[j++];
 	}
+	L.clear();
+	R.clear();
 
 
 }
@@ -121,6 +127,7 @@ void mergeSortArr(vector<MinHeapNode>& arr, int l, int r) {
 
 
 void mergeFile(long numfile) {
+
 	vector<ifstream> list(numfile);
 
 	ofstream outfile("output.txt");
@@ -128,7 +135,7 @@ void mergeFile(long numfile) {
 	vector<MinHeapNode> arr;
 
 	for (long i = 0; i < numfile; i++) {
-		string path = "./file/";
+		string path = "";
 		ifstream f;
 		list[i].open(path.append(to_string(i)).append(".txt"));
 
@@ -171,6 +178,9 @@ void mergeFile(long numfile) {
 	for (long i = 0; i < numfile; i++) {
 		list[i].close();
 	}
+
+
+
 }
 
 
@@ -180,6 +190,7 @@ void mergeFile(long numfile) {
 
 
 long createInitialRuns(long long int max_size) {
+	
 	string path;
 	cout << "input path to file:\n";
 	cin >> path;
@@ -197,10 +208,11 @@ long createInitialRuns(long long int max_size) {
 
 
 	myfile.close();
-	long long int max_size_file = pow(2, 32);/////////////////////////////////////////////////////////////////////////
+	long long int max_size_file = pow(2, 30)-100;/////////////////////////////////////////////////////////////////////////
 
 	if (file_size == 0) {
 		cout << "file is empty\n";
+		return -1;
 		//exit(EXIT_FAILURE);
 	}
 	else if (file_size > max_size) {
@@ -208,6 +220,10 @@ long createInitialRuns(long long int max_size) {
 
 	}
 	else if (file_size < max_size_file) {
+
+
+		
+
 		myfile.open(path);
 		file_id = -2;
 		if (myfile.is_open()) {
@@ -218,9 +234,11 @@ long createInitialRuns(long long int max_size) {
 				w.push_back(line);
 
 			}
+
 			mergeSort(w, 0, w.size() - 1);
 			ofstream file;
 			file.open("output.txt");
+			
 			for (int i = 0; i < w.size(); i++) {
 				file << w[i];
 				if (i != w.size() - 1) {
@@ -245,6 +263,7 @@ long createInitialRuns(long long int max_size) {
 			vector<string> w;
 
 			while (!myfile.eof()) {
+				
 				string line;
 				getline(myfile, line);
 				if (cur_size + line.size() < max_size_file) {
@@ -252,8 +271,9 @@ long createInitialRuns(long long int max_size) {
 					w.push_back(line);
 				}
 				else {
+
 					mergeSort(w, 0, w.size() - 1);
-					string fname = "./file/";
+					string fname = "";
 					ofstream file;
 					file.open(fname.append(to_string(file_id)).append(".txt"));
 					for (int i = 0; i < w.size(); i++) {
@@ -287,10 +307,6 @@ long createInitialRuns(long long int max_size) {
 
 
 		}
-		else {
-			cout << "file doesn't exit";
-			exit(EXIT_FAILURE);
-		}
 
 
 
@@ -301,25 +317,11 @@ long createInitialRuns(long long int max_size) {
 
 
 
-
 	return file_id;
 }
 
 
-void initfile() {
-	ofstream file;
-	file.open("input.txt");
-	long long int  x = 1;
-	cout << 10 * 1024;
-	for (int i = 0; i < 10 * 1024; i++) {
-		file << rand() % 10000;
-		if ((rand() % 2 + rand() % 3 + rand() % 4) == 4) {
-			file << "\n";
-			cout << i << "\n";
-		}
-	}
-	file.close();
-}
+
 
 
 int main() {
@@ -328,8 +330,8 @@ int main() {
 	cout << "input\n";
 	cout << "output\n";
 	cout << "maxsize\n";
+	cout << "break\n";
 
-	initfile();
 
 	int max_size = 0;
 	int id = -1;
@@ -347,25 +349,42 @@ int main() {
 				cin >> max_size;
 
 			}
+			auto start = high_resolution_clock::now();
 
 			id = createInitialRuns(max_size * pow(2, 30));
+			if(id > -1)
+				mergeFile(id);
+
+
+			auto stop = high_resolution_clock::now(); 
+			auto duration = duration_cast<microseconds>(stop - start); 
+			cout << "Time taken by function: "
+         		<< duration.count() << " microseconds" << endl; 
+				
 
 		}
 		else if (command == "output") {
 			if (id == -1) {
-				cout << "input  file is not suitable\n";
+				cout << "input file is not suitable\n";
 
 			}
-			else if (id == -2) {
-				cout << "file is sorted with name output.txt\n";
-			}
 			else {
-				cout << "file is sorted with name output.txt\n";
-				mergeFile(id);
+				
+				ifstream myfile("output.txt");
+				while(!myfile.eof()){
+					string line;
+					getline(myfile,line);
+					cout << line << "\n";
+				}
+				myfile.close();
+				
 			}
-			id = -1;
+			
+		}else if(command == "break"){
+			break;
 		}
 	}
+
 
 
 
