@@ -12,7 +12,7 @@
 #include <math.h>
 
 using namespace std;
-using namespace std::chrono; 
+using namespace std::chrono;
 //vector<string> words;
 
 
@@ -190,7 +190,7 @@ void mergeFile(long numfile) {
 
 
 long createInitialRuns(long long int max_size) {
-	
+
 	string path;
 	cout << "input path to file:\n";
 	cin >> path;
@@ -208,7 +208,7 @@ long createInitialRuns(long long int max_size) {
 
 
 	myfile.close();
-	long long int max_size_file = 2.5*pow(2, 30)-100;/////////////////////////////////////////////////////////////////////////
+	long long int max_size_file = 2.5 * pow(2, 30) - 100;/////////////////////////////////////////////////////////////////////////
 
 	if (file_size == 0) {
 		cout << "file is empty\n";
@@ -222,7 +222,7 @@ long createInitialRuns(long long int max_size) {
 	else if (file_size < max_size_file) {
 
 
-		
+
 
 		myfile.open(path);
 		file_id = -2;
@@ -238,7 +238,7 @@ long createInitialRuns(long long int max_size) {
 			mergeSort(w, 0, w.size() - 1);
 			ofstream file;
 			file.open("output.txt");
-			
+
 			for (int i = 0; i < w.size(); i++) {
 				file << w[i];
 				if (i != w.size() - 1) {
@@ -263,7 +263,7 @@ long createInitialRuns(long long int max_size) {
 			vector<string> w;
 
 			while (!myfile.eof()) {
-				
+
 				string line;
 				getline(myfile, line);
 				if (cur_size + line.size() < max_size_file) {
@@ -285,7 +285,7 @@ long createInitialRuns(long long int max_size) {
 					file.close();
 					file_id++;
 					w.clear();
-					cur_size = 0;
+					cur_size = line.size();
 					w.push_back(line);
 				}
 			}
@@ -352,15 +352,15 @@ int main() {
 			auto start = high_resolution_clock::now();
 
 			id = createInitialRuns(max_size * pow(2, 30));
-			if(id > -1)
+			if (id > -1)
 				mergeFile(id);
 
 
-			auto stop = high_resolution_clock::now(); 
-			auto duration = duration_cast<microseconds>(stop - start); 
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<microseconds>(stop - start);
 			cout << "Time taken by function: "
-         		<< duration.count() << " microseconds" << endl; 
-				
+				<< duration.count() << " microseconds" << endl;
+
 
 		}
 		else if (command == "output") {
@@ -369,18 +369,19 @@ int main() {
 
 			}
 			else {
-				
+
 				ifstream myfile("output.txt");
-				while(!myfile.eof()){
+				while (!myfile.eof()) {
 					string line;
-					getline(myfile,line);
+					getline(myfile, line);
 					cout << line << "\n";
 				}
 				myfile.close();
-				
+
 			}
-			
-		}else if(command == "break"){
+
+		}
+		else if (command == "break") {
 			break;
 		}
 	}
@@ -390,3 +391,4 @@ int main() {
 
 
 }
+
