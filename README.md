@@ -1,6 +1,7 @@
 # coccoctest
 build file:
 - g++ -o main main.cpp
+
 run file: 
 - ./main
 
