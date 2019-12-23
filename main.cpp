@@ -13,347 +13,276 @@
 
 using namespace std;
 using namespace std::chrono;
-//vector<string> words;
 
-
-struct MinHeapNode {
-	string line;
-	int i;
-};
-
-
-
-
-
-void merge(vector<string>& arr, int l, int m, int r) {
-	int i, j, k;
-	int n1 = m - l + 1;
-	int n2 = r - m;
-	vector<string> L(n1);
-	vector<string> R(n2);
-	for (i = 0; i < n1; i++) {
-		L[i] = arr[l + i];
+void heapify(vector<string> &arr,int n, int i){
+	int largest = i;
+	int l = 2*i+1;
+	int r = 2*i+2;
+	if(l<n && arr[l]>arr[largest]){
+		largest = l;
 	}
-	for (j = 0; j < n2; j++) {
-		R[j] = arr[m + 1 + j];
+	if(r<n && arr[r] > arr[largest]){
+		largest = r;
 	}
-
-
-
-	i = 0;
-	j = 0;
-	k = l;
-	while (i < n1 && j < n2) {
-		if (L[i].compare(R[j]) < 0) {
-			arr[k++] = L[i++];
-		}
-		else {
-			arr[k++] = R[j++];
-		}
-	}
-
-	while (i < n1) {
-		arr[k++] = L[i++];
-	}
-
-	while (j < n2) {
-		arr[k++] = R[j++];
-	}
-	L.clear();
-	R.clear();
-
-
-}
-
-
-void mergeSort(vector<string>& arr, int l, int r) {
-	if (l < r) {
-		int m = l + (r - l) / 2;
-		mergeSort(arr, l, m);
-		mergeSort(arr, m + 1, r);
-		merge(arr, l, m, r);
+	if(largest != i){
+		arr[i].swap(arr[largest]);
+		heapify(arr,n,largest);
 	}
 }
 
-
-
-void mergeArr(vector<MinHeapNode>& arr, int l, int m, int r) {
-	int i, j, k;
-	int n1 = m - l + 1;
-	int n2 = r - m;
-	vector<MinHeapNode> L(n1);
-	vector<MinHeapNode> R(n2);
-
-	for (i = 0; i < n1; i++) {
-		L[i] = arr[l + i];
+void heapSort(vector<string> &arr, int n){
+	for(int i = n/2-1; i >=0; i-- ){
+		heapify(arr,n,i);
 	}
-	for (j = 0; j < n2; j++) {
-		R[j] = arr[m + 1 + j];
-	}
-
-	i = 0;
-	j = 0;
-	k = l;
-	while (i < n1 && j < n2) {
-		if (L[i].line.compare(R[j].line) < 0) {
-			arr[k++] = L[i++];
-		}
-		else {
-			arr[k++] = R[j++];
-		}
-	}
-
-	while (i < n1) {
-		arr[k++] = L[i++];
-	}
-
-	while (j < n2) {
-		arr[k++] = R[j++];
-	}
-	L.clear();
-	R.clear();
-
-
-}
-
-void mergeSortArr(vector<MinHeapNode>& arr, int l, int r) {
-	if (l < r) {
-		int m = l + (r - l) / 2;
-		mergeSortArr(arr, l, m);
-		mergeSortArr(arr, m + 1, r);
-		mergeArr(arr, l, m, r);
+	for(int i = n-1; i >=0; i--){
+		arr[0].swap(arr[i]);
+		heapify(arr,i,0);
 	}
 }
 
-
-void mergeFile(long numfile) {
-
-	vector<ifstream> list(numfile);
-
-	ofstream outfile("output.txt");
-
-	vector<MinHeapNode> arr;
-
-	for (long i = 0; i < numfile; i++) {
-		string path = "";
-		ifstream f;
-		list[i].open(path.append(to_string(i)).append(".txt"));
-
-	}
-
-
-	for (long i = 0; i < numfile; i++) {
-		string line;
-		getline(list[i], line);
-		MinHeapNode minHeapNode;
-		minHeapNode.line = line;
-		minHeapNode.i = i;
-		arr.push_back(minHeapNode);
-	}
-
-	int k = 0;
-	while (arr.size() > 0) {
-		mergeSortArr(arr, 0, arr.size() - 1);
-		outfile << arr[0].line;
-
-
-		outfile << "\n";
-		if (!list[arr[0].i].eof()) {
-
-			getline(list[arr[0].i], arr[0].line);
-		}
-		else {
-			arr.erase(arr.begin());
-		}
-	}
-
-
-
-
-
-
-
-	outfile.close();
-
-	for (long i = 0; i < numfile; i++) {
-		list[i].close();
-	}
-
-
-
-}
-
-
-
-
-
-
-
-long createInitialRuns(long long int max_size) {
-
+long createInitialRuns(long long int max_ram){
 	string path;
 	cout << "input path to file:\n";
 	cin >> path;
-
-	long file_id = -1;
-	long long int file_size;
-	ifstream myfile(path, std::ios::binary | std::ios::ate);
-	if (myfile.is_open()) {
-		file_size = myfile.tellg();
+	//path = "input.txt";
+	ifstream f;
+	f.open(path);
+	if(!f.is_open()){
+		cout << "file does n't exist\n";
+		return 0;
 	}
-	else {
-		cout << "doesn't exist file\n";
-		return -1;
-	}
-
-
-	myfile.close();
-	long long int max_size_file = 2.5 * pow(2, 30) - 100;/////////////////////////////////////////////////////////////////////////
-
-	if (file_size == 0) {
-		cout << "file is empty\n";
-		return -1;
-		//exit(EXIT_FAILURE);
-	}
-	else if (file_size > max_size) {
-		cout << "size of file > " << max_size << "\n";
-
-	}
-	else if (file_size < max_size_file) {
-
-
-
-
-		myfile.open(path);
-		file_id = -2;
-		if (myfile.is_open()) {
-			vector<string> w;
-			while (!myfile.eof()) {
-				string line;
-				getline(myfile, line);
+	vector<string> w;
+	long long int ram = 0;
+	int file_id = -1;
+	if(f.is_open()){
+		file_id = 0;
+		while(!f.eof()){
+			string line;
+			if(ram < max_ram/1.2){
+				
+				getline(f,line);
+				ram += line.size();
+				
 				w.push_back(line);
 
-			}
-
-			mergeSort(w, 0, w.size() - 1);
-			ofstream file;
-			file.open("output.txt");
-
-			for (int i = 0; i < w.size(); i++) {
-				file << w[i];
-				if (i != w.size() - 1) {
-					file << "\n";
-				}
-			}
-			w.clear();
-			file.close();
-		}
-		myfile.close();
-	}
-
-	else {
-
-		myfile.open(path);
-		file_id = 0;
-
-		if (myfile.is_open()) {
-			long long int cur_size = 0;
-
-
-			vector<string> w;
-
-			while (!myfile.eof()) {
-
-				string line;
-				getline(myfile, line);
-				if (cur_size + line.size() < max_size_file) {
-					cur_size += line.size();
-					w.push_back(line);
-				}
-				else {
-
-					mergeSort(w, 0, w.size() - 1);
-					string fname = "";
-					ofstream file;
-					file.open(fname.append(to_string(file_id)).append(".txt"));
-					for (int i = 0; i < w.size(); i++) {
-						file << w[i];
-						if (i != w.size() - 1) {
-							file << "\n";
-						}
-					}
-					file.close();
-					file_id++;
-					w.clear();
-					cur_size = line.size();
-					w.push_back(line);
-				}
-			}
-			if (w.size() != 0) {
-				mergeSort(w, 0, w.size() - 1);
+			}else{
+				heapSort(w,w.size());
 				string fname = "./file/";
-				ofstream file;
-				file.open(fname.append(to_string(file_id)).append(".txt"));
-				for (int i = 0; i < w.size(); i++) {
+				fname.append(to_string(file_id)).append(".txt");
+				ofstream file(fname);
+				for(int i = 0; i < w.size(); i++){
 					file << w[i];
-					if (i != w.size() - 1) {
+					if(i != w.size()-1){
 						file << "\n";
 					}
 				}
 				file.close();
-				file_id++;
 				w.clear();
+				ram = line.size();
+				file_id++;
+	
+				w.push_back(line);
 			}
+		}
+
+		if(w.size() > 0){
+				heapSort(w,w.size());
+				string fname = "./file/";
+				fname.append(to_string(file_id)).append(".txt");
+				ofstream file(fname);
+				for(int i = 0; i < w.size(); i++){
+					file << w[i];
+					if(i != w.size()-1){
+						file << "\n";
+					}
+				}
+				file.close();
+
+
+				file_id++;
 
 
 		}
 
-
-
-		myfile.close();
-
 	}
 
 
+	
+	f.close();
 
 
 	return file_id;
 }
 
+typedef struct MinHeapNode{
+	string line;
+	int id;
+} MinHeapNode;
+
+void heapifyForMinHeapNode(vector<MinHeapNode> &arr, int n, int i){
+	int largest = i;
+	int l = 2*i+1;
+	int r = 2*i+2;
+	if(l < n and arr[largest].line.compare(arr[l].line)<0){
+		largest = l;
+	}
+	if(r < n and arr[largest].line.compare(arr[r].line)<0 ){
+		largest = r;
+	}
+	if(largest != i){
+		MinHeapNode tmp = arr[i];
+		arr[i] = arr[largest];
+		arr[largest] = tmp;
+		heapifyForMinHeapNode(arr,n,largest);
+	}
+}
 
 
 
 
-int main() {
 
-	cout << "Enter command:\n";
-	cout << "input\n";
-	cout << "output\n";
-	cout << "maxsize\n";
-	cout << "break\n";
+void mergeFile(int n){
+	vector<ifstream> listfile(n);
+	vector<MinHeapNode> arr;
+
+	for(int i = 0; i < n; i++){
+
+		string filename = "./file/";
+		filename.append(to_string(i)).append(".txt");
+		listfile[i].open(filename);
 
 
-	int max_size = 0;
-	int id = -1;
+		string line;
+		getline(listfile[i],line);
+		MinHeapNode minHeapNode;
+		minHeapNode.id = i;
+		minHeapNode.line = line;
+		arr.push_back(minHeapNode);
+	}
+	//build heap
+
+	for(int i = (n-1)/2; i >=0; i--){
+		heapifyForMinHeapNode(arr,n,i);
+	}
+	
+	ofstream output;
+	output.open("output.txt");
+	int cnt = 0;
+
+	while(cnt < n){
+
+		output << arr[0].line;
+		output << "\n";
+		string l;
+		if(!listfile[arr[0].id].eof()){
+			
+			getline(listfile[arr[0].id],arr[0].line);
+			
+			heapifyForMinHeapNode(arr,n-cnt,0);
+		}else{
+
+			cnt++;
+			arr.erase(arr.begin());
+
+		}
+	}
+	
+
+
+
+	for(int i = 0; i < n; i++){
+		listfile[i].close();
+	}
+	
+	output.close();
+}
+
+
+
+
+
+
+
+void testmemorywithquicksort(){
+	long long int max_ram = 5*pow(2,20);
+	string path;
+	//getline(cin,path);
+	path = "input.txt";
+	ifstream f;
+	f.open(path);
+	vector<string> w;
+	long long int ram = 0;
+	while(!f.eof()){
+	
+		string line;
+		getline(f,line);
+		ram += line.size();
+		if(line != "\0")
+			w.push_back(line);
+		//cout << ram << "\n";
+		if (ram > max_ram)
+			break;
+		
+	}
+
+
+	f.close();
+	cout << "quicksort";
+	//quickSort(w,0,w.size()-1);
+	heapSort(w,w.size());
+
+	ofstream output;
+	output.open("out.txt");
+	for(int i = 0; i < w.size(); i++){
+		output<<w[i];
+		output << "\n";
+	}
+	output.close();
+}
+
+
+void cmp(){
+
+	ifstream f2;
+	f2.open("output.txt");
+	int i = 0;
+	string l1;
+	getline(f2,l1);
+	while(!f2.eof()){
+		i++;
+		string l2;
+
+		getline(f2,l2);
+		if(l1.compare(l2) > 0){
+			cout << i << "\n";
+			cout << "\n";
+		}
+		l1 = l2;
+	}
+}
+
+int main(){
+	
+
+	double max_ram = 0;
 	while (1) {
 		cout << "Enter command:\n";
 		string command;
 		cin >> command;
-		if (command == "maxsize") {
-			cout << "enter max size(gb):\n";
-			cin >> max_size;
+		if (command == "setmaxmemory") {
+			cout << "enter max memory(gb):\n";
+			cin >> max_ram;
 		}
 		else if (command == "input") {
-			if (max_size == 0) {
-				cout << "enter max size(gb) before excute input command:\n";
-				cin >> max_size;
+			if (max_ram == 0) {
+				cout << "enter max memory(gb) before excute input command:\n";
+				cin >> max_ram;
 
 			}
 			auto start = high_resolution_clock::now();
 
-			id = createInitialRuns(max_size * pow(2, 30));
-			if (id > -1)
-				mergeFile(id);
+			int numoffile = createInitialRuns(max_ram * pow(2, 30));
+			mergeFile(numoffile);
 
 
 			auto stop = high_resolution_clock::now();
@@ -361,24 +290,6 @@ int main() {
 			cout << "Time taken by function: "
 				<< duration.count() << " microseconds" << endl;
 
-
-		}
-		else if (command == "output") {
-			if (id == -1) {
-				cout << "input file is not suitable\n";
-
-			}
-			else {
-
-				ifstream myfile("output.txt");
-				while (!myfile.eof()) {
-					string line;
-					getline(myfile, line);
-					cout << line << "\n";
-				}
-				myfile.close();
-
-			}
 
 		}
 		else if (command == "break") {
@@ -391,4 +302,25 @@ int main() {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
