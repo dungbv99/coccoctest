@@ -202,7 +202,9 @@ void mergeFile(int n){
 
 
 
-
+//i have try to use quicksort, heapsort,mergesort to sort when run runCreateInit() 
+//after try 3 algorithm with input size like 1gb,2gb,3gb, 300mb i realize that heapsort require less momory to 
+// store recursive(20% of input size)
 void testmemorywithquicksort(){
 	long long int max_ram = 5*pow(2,20);
 	string path;
@@ -240,7 +242,7 @@ void testmemorywithquicksort(){
 	output.close();
 }
 
-
+//function to compare 2 file in output file
 void cmp(){
 
 	ifstream f2;
@@ -262,7 +264,10 @@ void cmp(){
 }
 
 int main(){
-	
+	cout << "Enter command:\n";
+	cout << "setmaxmemory\n";
+	cout << "input\n";
+	cout << "break\n";
 
 	double max_ram = 0;
 	while (1) {
@@ -289,6 +294,7 @@ int main(){
 			auto duration = duration_cast<microseconds>(stop - start);
 			cout << "Time taken by function: "
 				<< duration.count() << " microseconds" << endl;
+			cout << "output.txt is sort file\n";
 
 
 		}
