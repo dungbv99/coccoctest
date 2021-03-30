@@ -1,329 +1,122 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <chrono> 
-
-#include <string>
-#include <iostream>
-#include<vector>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <stdlib.h>     // EXIT_FAILURE
-#include <stdio.h>
-#include <math.h>
-
+#include "bits/stdc++.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 using namespace std;
-using namespace std::chrono;
 
-void heapify(vector<string> &arr,int n, int i){
-	int largest = i;
-	int l = 2*i+1;
-	int r = 2*i+2;
-	if(l<n && arr[l]>arr[largest]){
-		largest = l;
-	}
-	if(r<n && arr[r] > arr[largest]){
-		largest = r;
-	}
-	if(largest != i){
-		arr[i].swap(arr[largest]);
-		heapify(arr,n,largest);
-	}
+uint64_t limitMemory=1000000;
+
+uint64_t caculateSize(){
+    return limitMemory;
 }
 
-void heapSort(vector<string> &arr, int n){
-	for(int i = n/2-1; i >=0; i-- ){
-		heapify(arr,n,i);
-	}
-	for(int i = n-1; i >=0; i--){
-		arr[0].swap(arr[i]);
-		heapify(arr,i,0);
-	}
+struct MyPair{
+    int id;
+    string value;
+};
+
+void writeSortToFile(vector<string> listLine, string outFilePath){
+    ofstream outFile(outFilePath);
+    sort(listLine.begin(), listLine.end());
+    ostream_iterator<string> output_iterator(outFile, "\n");
+    copy(listLine.begin(), listLine.end(), output_iterator);
+    return;
 }
 
-long createInitialRuns(long long int max_ram){
-	string path;
-	cout << "input path to file:\n";
-	cin >> path;
-	//path = "input.txt";
-	ifstream f;
-	f.open(path);
-	if(!f.is_open()){
-		cout << "file does n't exist\n";
-		return 0;
-	}
-	vector<string> w;
-	long long int ram = 0;
-	int file_id = -1;
-	if(f.is_open()){
-		file_id = 0;
-		while(!f.eof()){
-			string line;
-			if(ram < max_ram/1.2){
-				
-				getline(f,line);
-				ram += line.size();
-				
-				w.push_back(line);
-
-			}else{
-				heapSort(w,w.size());
-				string fname = "./file/";
-				fname.append(to_string(file_id)).append(".txt");
-				ofstream file(fname);
-				for(int i = 0; i < w.size(); i++){
-					file << w[i];
-					if(i != w.size()-1){
-						file << "\n";
-					}
-				}
-				file.close();
-				w.clear();
-				ram = line.size();
-				file_id++;
-	
-				w.push_back(line);
-			}
-		}
-
-		if(w.size() > 0){
-				heapSort(w,w.size());
-				string fname = "./file/";
-				fname.append(to_string(file_id)).append(".txt");
-				ofstream file(fname);
-				for(int i = 0; i < w.size(); i++){
-					file << w[i];
-					if(i != w.size()-1){
-						file << "\n";
-					}
-				}
-				file.close();
-
-
-				file_id++;
-
-
-		}
-
-	}
-
-
-	
-	f.close();
-
-
-	return file_id;
+int divideSortFile(string inputPath){
+    ifstream inFile(inputPath);
+    string line;
+    vector<string> listLine;
+    uint64_t size = 0;
+    int i = 0;
+    mkdir("file", 0777);
+    while(getline(inFile, line)){
+        listLine.push_back(line);
+        size += sizeof(listLine);
+        if(size > caculateSize()){
+            writeSortToFile(listLine, "./file/"+to_string(i)+".txt");
+            size = 0;
+            listLine.clear();
+            i++;
+        }
+    }
+    if(!listLine.empty()){
+        writeSortToFile(listLine, "./file/"+to_string(i)+".txt");
+        listLine.clear();
+        i++;
+    }
+    return i;
 }
 
-typedef struct MinHeapNode{
-	string line;
-	int id;
-} MinHeapNode;
-
-void heapifyForMinHeapNode(vector<MinHeapNode> &arr, int n, int i){
-	int largest = i;
-	int l = 2*i+1;
-	int r = 2*i+2;
-	if(l < n and arr[largest].line.compare(arr[l].line)<0){
-		largest = l;
-	}
-	if(r < n and arr[largest].line.compare(arr[r].line)<0 ){
-		largest = r;
-	}
-	if(largest != i){
-		MinHeapNode tmp = arr[i];
-		arr[i] = arr[largest];
-		arr[largest] = tmp;
-		heapifyForMinHeapNode(arr,n,largest);
-	}
+bool compareListFile(MyPair &a, MyPair &b){
+    if (a.value < b.value){
+        return true;
+    }
+    return false;
 }
 
-
-
-
-
-void mergeFile(int n){
-	vector<ifstream> listfile(n);
-	vector<MinHeapNode> arr;
-
-	for(int i = 0; i < n; i++){
-
-		string filename = "./file/";
-		filename.append(to_string(i)).append(".txt");
-		listfile[i].open(filename);
-
-
-		string line;
-		getline(listfile[i],line);
-		MinHeapNode minHeapNode;
-		minHeapNode.id = i;
-		minHeapNode.line = line;
-		arr.push_back(minHeapNode);
-	}
-	//build heap
-
-	for(int i = (n-1)/2; i >=0; i--){
-		heapifyForMinHeapNode(arr,n,i);
-	}
-	
-	ofstream output;
-	output.open("output.txt");
-	int cnt = 0;
-
-	while(cnt < n){
-
-		output << arr[0].line;
-		output << "\n";
-		string l;
-		if(!listfile[arr[0].id].eof()){
-			
-			getline(listfile[arr[0].id],arr[0].line);
-			
-			heapifyForMinHeapNode(arr,n-cnt,0);
-		}else{
-
-			cnt++;
-			arr.erase(arr.begin());
-
-		}
-	}
-	
-
-
-
-	for(int i = 0; i < n; i++){
-		listfile[i].close();
-	}
-	
-	output.close();
+void heapify(vector<MyPair> list, int n, int i){
+    int min = i;
+    int l = 2*i+1;
+    int r = 2*i+2;
+    if(l < n && list[l].value < list[min].value ){
+        min = l;
+    }
+    if(r < n && list[r].value < list[min].value){
+        min = r;
+    }
+    if(min != i){
+        swap(list[i], list[min]);
+        heapify(list, n, min);
+    }
 }
 
-
-
-
-
-
-//i have try to use quicksort, heapsort,mergesort to sort when run runCreateInit() 
-//after try 3 algorithm with input size like 1gb,2gb,3gb, 300mb i realize that heapsort require less momory to 
-// store recursive(20% of input size)
-void testmemorywithquicksort(){
-	long long int max_ram = 5*pow(2,20);
-	string path;
-	//getline(cin,path);
-	path = "input.txt";
-	ifstream f;
-	f.open(path);
-	vector<string> w;
-	long long int ram = 0;
-	while(!f.eof()){
-	
-		string line;
-		getline(f,line);
-		ram += line.size();
-		if(line != "\0")
-			w.push_back(line);
-		//cout << ram << "\n";
-		if (ram > max_ram)
-			break;
-		
-	}
-
-
-	f.close();
-	cout << "quicksort";
-	//quickSort(w,0,w.size()-1);
-	heapSort(w,w.size());
-
-	ofstream output;
-	output.open("out.txt");
-	for(int i = 0; i < w.size(); i++){
-		output<<w[i];
-		output << "\n";
-	}
-	output.close();
+void buildHeap(vector<MyPair> list, int n){
+    for(int i = n/2-1; i >=0; i--){
+        heapify(list,n,i);
+    }
 }
 
-//function to compare 2 file in output file
-void cmp(){
+void mergeFile(int n, string outPath){
+    vector<ifstream> listFile(n);
+    vector<MyPair> list(n);
+    for(int i=0; i < n; i++){
+        listFile[i].open("./file/"+to_string(i)+".txt");
+        getline(listFile[i], list[i].value);
+        list[i].id = i;
+    }
 
-	ifstream f2;
-	f2.open("output.txt");
-	int i = 0;
-	string l1;
-	getline(f2,l1);
-	while(!f2.eof()){
-		i++;
-		string l2;
+    buildHeap(list, n);
+    ofstream outFile(outPath);
 
-		getline(f2,l2);
-		if(l1.compare(l2) > 0){
-			cout << i << "\n";
-			cout << "\n";
-		}
-		l1 = l2;
-	}
+    while (n>0){
+        heapify(list, n, 0);
+        outFile << list[0].value << "\n";
+        if(listFile[list[0].id].eof()){
+            n--;
+            listFile[list[0].id].close();
+            list.erase(list.begin());
+        }else{
+            getline(listFile[list[0].id],list[0].value);
+        }
+    }
 }
 
 int main(){
-	cout << "Enter command:\n";
-	cout << "setmaxmemory\n";
-	cout << "input\n";
-	cout << "break\n";
+    string inputPath;
+    string outputPath;
 
-	double max_ram = 0;
-	while (1) {
-		cout << "Enter command:\n";
-		string command;
-		cin >> command;
-		if (command == "setmaxmemory") {
-			cout << "enter max memory(gb):\n";
-			cin >> max_ram;
-		}
-		else if (command == "input") {
-			if (max_ram == 0) {
-				cout << "enter max memory(gb) before excute input command:\n";
-				cin >> max_ram;
-
-			}
-			auto start = high_resolution_clock::now();
-
-			int numoffile = createInitialRuns(max_ram * pow(2, 30));
-			mergeFile(numoffile);
-
-
-			auto stop = high_resolution_clock::now();
-			auto duration = duration_cast<microseconds>(stop - start);
-			cout << "Time taken by function: "
-				<< duration.count() << " microseconds" << endl;
-			cout << "output.txt is sort file\n";
-
-
-		}
-		else if (command == "break") {
-			break;
-		}
-	}
-
-
-
-
-
+//    cout << "input file path: \n";
+//    cin >> inputPath;
+//    cout << "output file path: \n";
+//    cin >> outputPath;
+//    cout << "limitMemory: \n";
+//    cin >> limitMemory;
+//    inFile.open(inputPath);
+//    outFile.open(outputPath);
+    int n = divideSortFile("./in.txt");
+//    cout << "n : " << n << "\n";
+    mergeFile(n, "./out.txt");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
