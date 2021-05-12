@@ -39,5 +39,5 @@ if __name__ == '__main__':
     a = 1024*1024
    
     print a
-    generate_big_random_letters("in.txt",a,1)
+    generate_big_random_letters("in.txt",a,4)
     #readfile()
