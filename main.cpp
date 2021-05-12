@@ -1,12 +1,11 @@
 #include "bits/stdc++.h"
 #include <sys/stat.h>
-#include <sys/types.h>
 using namespace std;
 
 uint64_t limitMemory=1000000;
 
 uint64_t caculateSize(){
-    return limitMemory;
+    return limitMemory/1.2;
 }
 
 struct MyPair{
@@ -47,12 +46,6 @@ int divideSortFile(string inputPath){
     return i;
 }
 
-bool compareListFile(MyPair &a, MyPair &b){
-    if (a.value < b.value){
-        return true;
-    }
-    return false;
-}
 
 void heapify(vector<MyPair> list, int n, int i){
     int min = i;
@@ -104,18 +97,14 @@ void mergeFile(int n, string outPath){
 int main(){
     string inputPath;
     string outputPath;
-
-//    cout << "input file path: \n";
-//    cin >> inputPath;
-//    cout << "output file path: \n";
-//    cin >> outputPath;
-//    cout << "limitMemory: \n";
-//    cin >> limitMemory;
-//    inFile.open(inputPath);
-//    outFile.open(outputPath);
-    int n = divideSortFile("./in.txt");
-//    cout << "n : " << n << "\n";
-    mergeFile(n, "./out.txt");
+    cout << "input file path: \n";
+    cin >> inputPath;
+    cout << "output file path: \n";
+    cin >> outputPath;
+    cout << "limitMemory: \n";
+    cin >> limitMemory;
+    int n = divideSortFile(inputPath);
+    mergeFile(n, outputPath);
 }
 
 
