@@ -101,7 +101,7 @@ int main(){
     cin >> inputPath;
     cout << "output file path: \n";
     cin >> outputPath;
-    cout << "limitMemory: \n";
+    cout << "limitMemory(kb): \n";
     cin >> limitMemory;
     int n = divideSortFile(inputPath);
     mergeFile(n, outputPath);

@@ -15,7 +15,7 @@ def generate_big_random_letters(filename,size,numgb):
         for j in range(numgb):
             print "j = ", j
             for i in range(size):
-                if(i%(1024*1024) == 0):
+                if(i%(1024*1024*1000) == 0):
                     print i
                 chars = ''.join([random.choice(string.letters) for i in range(random.randrange(1,500))])
                 f.write(chars)
@@ -36,7 +36,7 @@ def readfile():
     
 
 if __name__ == '__main__':
-    a = 1024*1024
+    a = 1024*1024*1000
    
     print a
     generate_big_random_letters("in.txt",a,4)
