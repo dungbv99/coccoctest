@@ -137,7 +137,7 @@ int main(){
     int n = divideSortFile(inputPath);
     mergeFile(n, outputPath);
     time(&finish);
-    cout << "sort time = " << difftime(start, end()) << "seceonds \n" ;
+    cout << "sort time = " << difftime(finish, start) << "seceonds \n" ;
 //    checkOutputSortFile(outputPath);
 }
 
