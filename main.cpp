@@ -17,7 +17,8 @@ void writeSortToFile(vector<string> listLine, string outFilePath){
     ofstream outFile(outFilePath);
     sort(listLine.begin(), listLine.end());
     ostream_iterator<string> output_iterator(outFile, "\n");
-    copy(listLine.begin(), listLine.end(), output_iterator);
+    copy(listLine.begin(), listLine.begin()+listLine.size()-1, output_iterator);
+    outFile << listLine[listLine.size()-1];
     return;
 }
 
@@ -30,7 +31,7 @@ int divideSortFile(string inputPath){
     mkdir("file", 0777);
     while(getline(inFile, line)){
         listLine.push_back(line);
-        size += sizeof(listLine);
+        size += line.size();
         if(size > caculateSize()){
             writeSortToFile(listLine, "./file/"+to_string(i)+".txt");
             size = 0;
@@ -47,7 +48,7 @@ int divideSortFile(string inputPath){
 }
 
 
-void heapify(vector<MyPair> list, int n, int i){
+void heapify(vector<MyPair> &list, int n, int i){
     int min = i;
     int l = 2*i+1;
     int r = 2*i+2;
@@ -63,7 +64,7 @@ void heapify(vector<MyPair> list, int n, int i){
     }
 }
 
-void buildHeap(vector<MyPair> list, int n){
+void buildHeap(vector<MyPair> &list, int n){
     for(int i = n/2-1; i >=0; i--){
         heapify(list,n,i);
     }
@@ -79,6 +80,8 @@ void mergeFile(int n, string outPath){
     }
 
     buildHeap(list, n);
+
+
     ofstream outFile(outPath);
 
     while (n>0){
@@ -94,6 +97,24 @@ void mergeFile(int n, string outPath){
     }
 }
 
+void checkOutPutSortFile(string outputPath){
+    ifstream out;
+    string l1;
+    string l2;
+    out.open(outputPath);
+    getline(out, l1);
+    int l = 1;
+    while (!out.eof()){
+        getline(out, l2);
+        l++;
+        if(l1.compare(l2) > 0){
+            cout << l1 << "  " << l2 << " " << l << "\n";
+        }
+        l1 = l2;
+    }
+
+}
+
 int main(){
     string inputPath;
     string outputPath;
@@ -105,6 +126,7 @@ int main(){
     cin >> limitMemory;
     int n = divideSortFile(inputPath);
     mergeFile(n, outputPath);
+//    checkOutPutSortFile(outputPath);
 }
 
 
