@@ -132,9 +132,12 @@ int main(){
     cin >> outputPath;
     cout << "limitMemory(kb): \n";
     cin >> limitMemory;
-
+    time_t start, finish;
+    time(&start);
     int n = divideSortFile(inputPath);
     mergeFile(n, outputPath);
+    time(&finish);
+    cout << "sort time = " << difftime(start, end()) << "seceonds \n" ;
 //    checkOutputSortFile(outputPath);
 }
 
