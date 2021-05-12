@@ -3,9 +3,10 @@
 using namespace std;
 
 uint64_t limitMemory=1000000;
-
-uint64_t caculateSize(){
-    return limitMemory/1.2;
+//when program run, will incur extra memory like stack to store recursive when sort array
+//so don't read use limitMemory to read from input file to sort
+uint64_t calculateSize(){
+    return limitMemory/2.5;
 }
 
 struct MyPair{
@@ -19,9 +20,12 @@ void writeSortToFile(vector<string> listLine, string outFilePath){
     ostream_iterator<string> output_iterator(outFile, "\n");
     copy(listLine.begin(), listLine.begin()+listLine.size()-1, output_iterator);
     outFile << listLine[listLine.size()-1];
+    outFile.close();
     return;
 }
-
+//split input file to n file with n
+//size of 1 file is approximately calculateSize()
+//n = size of input file / calculateSize()
 int divideSortFile(string inputPath){
     ifstream inFile(inputPath);
     string line;
@@ -32,10 +36,11 @@ int divideSortFile(string inputPath){
     while(getline(inFile, line)){
         listLine.push_back(line);
         size += line.size();
-        if(size > caculateSize()){
+        if(size > calculateSize()){
             writeSortToFile(listLine, "./file/"+to_string(i)+".txt");
             size = 0;
             listLine.clear();
+            listLine.shrink_to_fit();
             i++;
         }
     }
@@ -47,7 +52,7 @@ int divideSortFile(string inputPath){
     return i;
 }
 
-
+//after first element in list is writen in out put file, heapify list to get the smallest element
 void heapify(vector<MyPair> &list, int n, int i){
     int min = i;
     int l = 2*i+1;
@@ -63,7 +68,7 @@ void heapify(vector<MyPair> &list, int n, int i){
         heapify(list, n, min);
     }
 }
-
+//build the first heap in the first time
 void buildHeap(vector<MyPair> &list, int n){
     for(int i = n/2-1; i >=0; i--){
         heapify(list,n,i);
@@ -71,6 +76,7 @@ void buildHeap(vector<MyPair> &list, int n){
 }
 
 void mergeFile(int n, string outPath){
+    cout << "merge \n";
     vector<ifstream> listFile(n);
     vector<MyPair> list(n);
     for(int i=0; i < n; i++){
@@ -91,13 +97,15 @@ void mergeFile(int n, string outPath){
             n--;
             listFile[list[0].id].close();
             list.erase(list.begin());
+            buildHeap(list, n);
         }else{
             getline(listFile[list[0].id],list[0].value);
         }
     }
 }
 
-void checkOutPutSortFile(string outputPath){
+//compare all 2 adjacent line in output file
+void checkOutputSortFile(string outputPath){
     ifstream out;
     string l1;
     string l2;
@@ -124,9 +132,10 @@ int main(){
     cin >> outputPath;
     cout << "limitMemory(kb): \n";
     cin >> limitMemory;
+
     int n = divideSortFile(inputPath);
     mergeFile(n, outputPath);
-//    checkOutPutSortFile(outputPath);
+//    checkOutputSortFile(outputPath);
 }
 
 
