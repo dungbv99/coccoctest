@@ -6,7 +6,7 @@ uint64_t limitMemory=1000000;
 //when program run, will incur extra memory like stack to store recursive when sort array
 //so don't read use limitMemory to read from input file to sort
 uint64_t calculateSize(){
-    return limitMemory/2.5;
+    return limitMemory;
 }
 
 struct MyPair{
@@ -14,7 +14,7 @@ struct MyPair{
     string value;
 };
 
-void writeSortToFile(vector<string> listLine, string outFilePath){
+void writeSortToFile(vector<string>& listLine, string outFilePath){
     ofstream outFile(outFilePath);
     sort(listLine.begin(), listLine.end());
     ostream_iterator<string> output_iterator(outFile, "\n");
@@ -33,12 +33,17 @@ int divideSortFile(string inputPath){
     uint64_t size = 0;
     int i = 0;
     mkdir("file", 0777);
+//    int num = 0;
     while(getline(inFile, line)){
         listLine.push_back(line);
         size += line.size();
-        if(size > calculateSize()){
+//        num++; // consider num/log(num)
+        if(size > limitMemory){
+//            cout << "i " << i << "\n";
+//            cout << listLine.size() << "\n";
             writeSortToFile(listLine, "./file/"+to_string(i)+".txt");
             size = 0;
+//            num = 0;
             listLine.clear();
             listLine.shrink_to_fit();
             i++;
@@ -130,7 +135,7 @@ int main(){
     cin >> inputPath;
     cout << "output file path: \n";
     cin >> outputPath;
-    cout << "limitMemory(kb): \n";
+    cout << "limitMemory(byte): \n";
     cin >> limitMemory;
     time_t start, finish;
     time(&start);
