@@ -21,7 +21,7 @@ void writeSortToFile(vector<string>& listLine, string outFilePath){
     /*
      * write n-1 line with "\n" in the end of file
      * and write nth file without "\n"
-     * to guarantee when merge file the exception is not happened
+     * to guarantee when merge file does not read "\n" in the last line
      */
     copy(listLine.begin(), listLine.begin()+listLine.size()-1, output_iterator);
     outFile << listLine[listLine.size()-1];
@@ -132,7 +132,7 @@ void checkOutputSortFile(string outputPath){
 int main(){
     string inputPath;
     string outputPath;
-    cout << "input file path: \n";
+    cout << "input path of file to sort: \n";
     cin >> inputPath;
     cout << "output file path: \n";
     cin >> outputPath;
