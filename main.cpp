@@ -39,13 +39,14 @@ int divideSortFile(string inputPath){
         size += line.size();
 //        num++; // consider num/log(num)
         if(size > limitMemory){
-//            cout << "i " << i << "\n";
-//            cout << listLine.size() << "\n";
+
             writeSortToFile(listLine, "./file/"+to_string(i)+".txt");
             size = 0;
 //            num = 0;
             listLine.clear();
             listLine.shrink_to_fit();
+            cout << "i " << i << "\n";
+            cout << listLine.size() << "\n";
             i++;
         }
     }
