@@ -19,9 +19,9 @@ void writeSortToFile(vector<string>& listLine, string outFilePath){
     sort(listLine.begin(), listLine.end());
     ostream_iterator<string> output_iterator(outFile, "\n");
     /*
-     * write n-1 line with "\n" in the end of file
-     * and write nth file without "\n"
-     * to guarantee when merge file does not read "\n" in the last line
+     * write n-1 line with "\n" in the end of line
+     * and write nth line without "\n"
+     * to guarantee when merge file does not read "\n" in the last line of file
      */
     copy(listLine.begin(), listLine.begin()+listLine.size()-1, output_iterator);
     outFile << listLine[listLine.size()-1];
