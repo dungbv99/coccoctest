@@ -30,7 +30,7 @@ void writeSortToFile(vector<string>& listLine, string outFilePath){
 }
 
 /*
- * depend on limited memory for read input file
+ * depend on limited memory to read input file
  * when reading an appropriate memory size, go writeSortToFile function to sort and write to file
  * return number of file to be split and sorted
  */
