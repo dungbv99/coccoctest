@@ -62,7 +62,7 @@ int divideSortFile(string inputPath){
 }
 
 /*
- * defind pi type with:
+ * define pi type with:
  *  -   pi.first is the line value in priority queue
  *  -   pi.second is the index of file
  */
