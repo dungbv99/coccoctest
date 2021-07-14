@@ -75,7 +75,7 @@ void mergeFile(int n, string outPath){
     vector<ifstream> listSortedFile(n);
     /*
      * use priority queue with greater comparator for the first element is always the smallest of the elements it contains
-     * pi.first is string which will be used to compare
+     * pi.first(the value of thí line) is string which will be used to compare before pi.second(id of sorted file)
      */
     priority_queue<pi, vector<pi>, greater<pi>> pq;
     string line;
