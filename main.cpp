@@ -1,5 +1,8 @@
 #include "bits/stdc++.h"
 #include <sys/stat.h>
+#include <unistd.h>
+
+
 using namespace std;
 
 uint64_t limitMemory;
@@ -98,16 +101,26 @@ void mergeFile(int n, string outPath){
         }
     }
 }
+//remove temporary folder in step 1 : delete all file before delete folder
+void rmTemporaryFolder(int n){
+    for(int i = 0; i < n; i++){
+        string path = "./file/"+ to_string(i)+".txt";
+        remove(path.c_str());
+    }
+    rmdir("./file/");
+}
 
 /*
  * execute external sort function
- * divide 2 step
+ * divide 3 step
  * step 1: divide input file to n file depend on limit memory and sort them
  * step 2: merge n sorted file
+ * step 3: remove temporary folder which create to store temporary sorted file in step 1
  */
 void externalSort(string inputPath, string outputPath){
     int n = divideSortFile(inputPath);
     mergeFile(n, outputPath);
+    rmTemporaryFolder(n);
 }
 
 //compare all 2 adjacent line in output file
@@ -138,7 +151,6 @@ int main(){
     cin >> outputPath;
     cout << "limitMemory(byte): \n";
     cin >> limitMemory;
-
     time_t start, finish;
     time(&start);
     externalSort(inputPath, outputPath);
